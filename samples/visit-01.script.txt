@@ -1,0 +1,23 @@
+CLINICIAN: Good morning, Mr. Alvarez. Come on in and have a seat. How have you been since we last saw you in July?
+PATIENT: Morning, doctor. Mostly okay. The blood pressure has been better, I think. But I've had this cough for about three weeks now that just won't quit.
+CLINICIAN: Tell me more about the cough. Is it dry, or are you bringing anything up?
+PATIENT: It's dry. Worse at night when I lie down. No fever, no chills. I haven't been short of breath, just annoyed by it.
+CLINICIAN: Any heartburn, or a sour taste in the morning? Any runny nose or postnasal drip?
+PATIENT: A little heartburn maybe once or twice a week. No runny nose.
+CLINICIAN: Okay. Now, the lisinopril we started in July for your blood pressure. Are you still taking it every day?
+PATIENT: Yes, ten milligrams every morning. I haven't missed any.
+CLINICIAN: Good. A dry cough is a known side effect of lisinopril, and the timing fits. We'll come back to that. How about the metformin? Any stomach upset?
+PATIENT: No, the metformin has been fine. I take it with breakfast and dinner, five hundred milligrams each time.
+CLINICIAN: Have you been checking your sugars at home?
+PATIENT: Most mornings. They're usually between one twenty and one forty fasting.
+CLINICIAN: That's an improvement. Any smoking, any new exposures, anyone sick at home?
+PATIENT: No, I quit smoking twelve years ago. Nobody sick at home.
+CLINICIAN: Let me take a listen. Take a deep breath for me. And again. Lungs are clear, no wheezing, no crackles. Your heart sounds regular. No swelling in your ankles. Blood pressure today is one twenty-eight over eighty-two, and you're down three pounds from July, so nice work.
+PATIENT: Thank you. So what do we do about the cough?
+CLINICIAN: My assessment is that this is most likely an ACE inhibitor cough from the lisinopril. Your lungs are clear and there's nothing pointing to infection. The plan is to stop the lisinopril and switch you to losartan, fifty milligrams once daily. It works on the same system but doesn't cause the cough. The cough can take a few weeks to fully clear after stopping.
+PATIENT: Okay, that sounds reasonable.
+CLINICIAN: For the diabetes, we'll continue metformin at the current dose. I'd like to repeat your A1C and a basic metabolic panel today, and we'll check your potassium and kidney function again in two weeks because of the medication change. Keep checking fasting sugars a few mornings a week.
+PATIENT: Will do.
+CLINICIAN: If the cough is not improving in four weeks, or if you develop fever, shortness of breath, or you start coughing up anything, call us sooner. Otherwise I'll see you back in three months. Any questions?
+PATIENT: No, I think that covers it. Thanks, doctor.
+CLINICIAN: Take care, Mr. Alvarez.

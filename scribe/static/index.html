@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scribe review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>Scribe <span class="muted">review</span></h1>
+  <div id="health" class="muted">checking…</div>
+</header>
+
+<main>
+  <section class="col sessions">
+    <h2>Sessions</h2>
+    <div class="capture">
+      <input id="label" placeholder="label (e.g. room 3, follow-up)">
+      <div class="row">
+        <button id="rec">● Record</button>
+        <label class="btn">Upload<input id="file" type="file" accept="audio/*" hidden></label>
+      </div>
+      <div id="recstatus" class="muted"></div>
+    </div>
+    <ul id="list"></ul>
+  </section>
+
+  <section class="col transcript">
+    <h2>Transcript <button id="transcribe" class="small" disabled>Transcribe</button></h2>
+    <pre id="transcript" class="pane muted">Select or record a session.</pre>
+  </section>
+
+  <section class="col note">
+    <h2>Draft note
+      <select id="template"></select>
+      <button id="draft" class="small" disabled>Draft</button>
+    </h2>
+    <input id="instructions" placeholder="extra instructions for this draft (optional)">
+    <textarea id="note" class="pane" placeholder="The draft appears here. Edit freely; it is not a note until you sign it." disabled></textarea>
+    <div class="row">
+      <span id="draftbadge" class="badge">DRAFT · not signed</span>
+      <button id="save" class="small" disabled>Save edits</button>
+      <button id="copy" class="small" disabled>Copy</button>
+      <button id="sign" class="small primary" disabled>Sign</button>
+    </div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

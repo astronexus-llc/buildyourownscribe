@@ -1,0 +1,67 @@
+site_name: Build Your Scribe
+site_description: Build your own local-first medical ambient scribe, one lesson at a time.
+site_url: https://frasod.github.io/buildyourscribe/
+repo_url: https://github.com/frasod/buildyourscribe
+repo_name: frasod/buildyourscribe
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      accent: deep orange
+      toggle: { icon: material/weather-night, name: Dark mode }
+    - scheme: slate
+      primary: teal
+      accent: deep orange
+      toggle: { icon: material/weather-sunny, name: Light mode }
+  font:
+    text: Source Sans 3
+    code: JetBrains Mono
+  features:
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - content.code.copy
+    - content.action.edit
+    - search.suggest
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed: { alternate_style: true }
+  - pymdownx.highlight: { anchor_linenums: true }
+  - pymdownx.inlinehilite
+  - tables
+  - toc: { permalink: true }
+  - attr_list
+  - md_in_html
+  - pymdownx.snippets: { base_path: ['.'], check_paths: true }
+  - pymdownx.tasklist: { custom_checkbox: true }
+
+nav:
+  - Home: index.md
+  - Start here:
+      - 0 · What an ambient scribe is: 00-what-is-an-ambient-scribe.md
+      - 1 · Set up your workbench: 01-setup.md
+  - Build it:
+      - 2 · Record a visit: 02-record.md
+      - 3 · Transcribe: 03-transcribe.md
+      - 4 · Draft the note: 04-draft-note.md
+      - 5 · Assemble the pipeline: 05-pipeline.md
+      - 6 · The review app: 06-review-app.md
+  - Make it safe:
+      - 7 · Harden it: 07-harden.md
+      - 8 · Evaluate it: 08-evaluate.md
+  - Make it yours:
+      - 9 · Templates for your specialty: 09-templates.md
+      - 10 · Where to go next: 10-next.md
+  - Reference:
+      - Configuration: reference/configuration.md
+      - Command line: reference/cli.md
+      - Choosing models: reference/models.md
+      - Troubleshooting: reference/troubleshooting.md
+      - Glossary: reference/glossary.md
