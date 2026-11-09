@@ -23,6 +23,9 @@ The first run downloads the model to `~/.cache/huggingface`. Then:
 [00:34] Okay, now, the lisinopril we started in July for your blood pressure. Are you still taking it every day?
 ```
 
+!!! note "The loop near the top, for NVIDIA machines"
+    `pip` installs the CUDA math libraries inside the Python environment, where the system does not look for them. The loop loads them by hand before Whisper starts. Without it the script finds your GPU, loads the model, and then stops with `Library libcublas.so.12 is not found` at the first word. On a Mac or a CPU-only machine it does nothing. The package does the same thing in `scribe/transcribe.py`.
+
 ## What Whisper is
 
 Whisper is OpenAI's open-weights speech recognition model, trained on 680,000 hours of audio. `faster-whisper` is a reimplementation that runs two to four times faster using the CTranslate2 engine, with the same weights. It is the default speech-to-text in nearly every open scribe project for one reason: it already knows "lisinopril".
@@ -36,6 +39,8 @@ It comes in sizes. The `.en` variants are English-only and slightly better at En
 | `small.en` | 480 MB | ~2 GB | ~40× | Good. **The default here** |
 | `medium.en` | 1.5 GB | ~5 GB | ~15× | Very good |
 | `large-v3` | 3 GB | ~10 GB | ~8× | Best, multilingual |
+
+The speed and memory columns are rough guides from published figures, not measurements made for this course. Measure on your own machine; the script prints the time.
 
 Try them:
 

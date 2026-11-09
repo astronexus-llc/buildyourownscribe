@@ -2,6 +2,11 @@
 
 Two models, two decisions. Both are "the biggest that fits comfortably".
 
+!!! info "What this course was actually tested on"
+    One machine: an RTX 5090, Whisper `small.en` through faster-whisper, and a 35B Qwen model (`Qwen3.6-35B-A3B`, 4-bit) served by vLLM. Every transcript and note quoted in the lessons came from that setup. The Vosk comparison in Lesson 3 was run on the same machine.
+
+    The Ollama commands and model names are the route we recommend for most readers, but they were not run for this course. Neither were the smaller language models. The speed and memory figures in the tables below are rough guides from published numbers, not our measurements. If something on the Ollama route does not match what you see, please open an issue.
+
 ## Speech to text (Whisper via faster-whisper)
 
 | Model | Size | GPU VRAM (float16) | CPU RAM (int8) | Speed, RTX-class GPU | Speed, 8-core CPU | Accuracy |
@@ -35,7 +40,7 @@ The scribe does not care which model, only that a server speaks the OpenAI chat 
 | 3 to 4B | `qwen3:4b`, `llama3.2:3b`, `gemma3:4b` | 4 GB VRAM or CPU with 8 GB RAM | Usable. Watch for invented normals and dropped list items |
 | 7 to 9B | `qwen3:8b`, `llama3.1:8b`, `gemma3:12b` | 8 GB VRAM or 16 GB RAM on CPU (slow) | **Recommended start.** Reliably follows the rules block |
 | 14 to 32B | `qwen3:14b`, `qwen3:32b`, `gemma3:27b` | 12 to 24 GB VRAM | Noticeably better at long lists and negations |
-| Mixture of experts, 30B+ | `qwen3:30b-a3b` | 20 GB+ VRAM, fast once loaded | Large-model quality at small-model speed; what this course was tested with |
+| Mixture of experts, 30B+ | `qwen3:30b-a3b` | 20 GB+ VRAM, fast once loaded | Large-model quality at small-model speed; the closest Ollama equivalent to what this course was tested with |
 
 Quantisation: Ollama's defaults (Q4_K_M) are fine. Below 4-bit, faithfulness degrades fast.
 

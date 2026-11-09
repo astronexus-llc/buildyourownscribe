@@ -42,17 +42,22 @@ class Pipeline:
         return meta
 
     def transcribe(self, sid: str):
-        t = self.transcriber.transcribe_file(self.store.path(sid, "audio.wav"))
+        self.store.require_unsigned(sid)
+        audio = self.store.path(sid, "audio.wav")
+        if not audio.exists():
+            raise FileNotFoundError(f"Session {sid} has no audio to transcribe")
+        t = self.transcriber.transcribe_file(audio)
         self.store.save_transcript(sid, t)
         return t
 
     def draft(self, sid: str, template: str = "soap", extra_instructions: str = ""):
+        self.store.require_unsigned(sid)
         t = self.store.transcript(sid)
         if t is None:
             raise RuntimeError("Transcribe before drafting")
         d = self.llm.draft(t, template=template, extra_instructions=extra_instructions,
                            template_dir_override=self.store.root / "templates")
-        self.store.save_note(sid, d.text, template=template, model=d.model)
+        self.store.save_note(sid, d.text, template=template, model=d.model, warnings=d.warnings)
         return d
 
     def run(self, audio_path: Path, template: str = "soap", label: str = "", extra_instructions: str = "") -> str:

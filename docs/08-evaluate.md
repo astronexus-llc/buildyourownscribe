@@ -4,7 +4,7 @@
 
 ## Three real errors from our own sample
 
-The synthetic visit in `samples/` was transcribed with Whisper `small.en` and drafted with an 8B model. Both did well. Both also did this:
+The synthetic visit in `samples/` was transcribed with Whisper `small.en` and drafted with the 35B Qwen model on our test machine. Both did well. Both also did this:
 
 **1. The speech-to-text error that changed a meaning.** The clinician said: *"or if you develop fever, shortness of breath, or you start coughing up anything, call us sooner."* Whisper wrote:
 
@@ -13,7 +13,7 @@ The synthetic visit in `samples/` was transcribed with Whisper `small.en` and dr
 [02:20] Before you start coughing up anything, call us sooner.
 ```
 
-"or you" became "Before you". A reader of the raw transcript might conclude the patient was told to call before coughing anything up. The language model, with the whole context, wrote *"call sooner if fever, shortness of breath, or hemoptysis develops"*, which is right. This time.
+"or you" became "Before you". A reader of the raw transcript might conclude the patient was told to call before coughing anything up. The language model, with the whole context, wrote *"call sooner if fever, shortness of breath, or hemoptysis develops"* in one run and *"or begins producing sputum"* in another. Both recover the meaning. Both are also the model's words, not the clinician's, who said "coughing up anything". It got it right this time.
 
 **2. The paraphrase that added a claim.** For the after-visit summary the clinician said *"repeat your A1C and a basic metabolic panel today."* The model wrote *"We checked your blood sugar, A1C, and kidney function today."* A basic metabolic panel does include glucose and creatinine, so a clinician would accept it. But the model stated a fact about what a panel contains that was not in the transcript. On a different test it will fill a gap with something false in exactly the same tone.
 
@@ -27,7 +27,7 @@ For each sentence in the draft, ask three questions:
 
 1. **Was it said?** Find it in the transcript. If you cannot, it is invented. Delete it.
 2. **Was it said *that way*?** Dose, frequency, laterality, negation, who said it. "Denies chest pain" when the clinician asked and the patient said "a little" is an inversion.
-3. **Is anything missing?** Read the transcript once more looking for things the note skipped. Models drop the second half of long lists.
+3. **Is anything missing?** Read the transcript once more looking for things the note skipped. Models drop the second half of long lists. Check the first minutes of the visit in particular: a model server with too small a context window loses those first ([Lesson 4](04-draft-note.md#two-failures-that-give-no-error)).
 
 The `transcript-cleanup` template helps with step 1: it produces a speaker-labelled, filler-free transcript that is faster to scan than the timestamped raw one.
 
@@ -45,6 +45,7 @@ A test set is five to ten recordings you know the truth of. Role-play them with 
 - a visit with a drug name that sounds like another (the lisinopril problem)
 - a visit where the patient contradicts themselves
 - a visit in your specialty's vocabulary
+- one visit as long as your longest real one, with a distinctive fact in the first minute (does the note still have it?)
 
 Save each with its script in a folder. Run them all:
 
@@ -83,7 +84,7 @@ Synthetic speech is cleaner than a real room, so it tests the drafting more than
 
 ## What good looks like
 
-An honest target for an 8B model with `medium.en` on clean audio: zero invented findings, fewer than one meaningful omission per visit, and a handful of wording fixes. If you see invented findings, first suspect the template (is "use only information in the transcript" still there?), then the model size, then the audio quality.
+A reasonable target on clean audio, to be checked against your own test set rather than taken from us: zero invented findings, fewer than one meaningful omission per visit, and a handful of wording fixes. If you see invented findings, first suspect the template (is "use only information in the transcript" still there?), then the model size, then the audio quality.
 
 ## Try
 

@@ -12,7 +12,7 @@
 
 ## GPU
 
-**`Library libcublas.so.12 is not found` or `libcudnn` errors.** The CUDA math libraries are missing. `uv pip install -e ".[cuda]"` installs them through pip; the scribe loads them itself at start, no `LD_LIBRARY_PATH` needed. If you still see it, `nvidia-smi` must work first; if it does not, it is a driver issue.
+**`Library libcublas.so.12 is not found` or `libcudnn` errors.** The CUDA math libraries are missing. `uv pip install -e ".[cuda]"` installs them through pip; the scribe and `steps/02_transcribe.py` load them at start, no `LD_LIBRARY_PATH` needed. Your own script needs the same few lines; copy them from the lesson script. If you still see it, `nvidia-smi` must work first; if it does not, it is a driver issue.
 
 **`CUDA out of memory`.** Smaller Whisper model, or `SCRIBE_STT_COMPUTE=int8_float16`, or close whatever else is using the GPU (`nvidia-smi` shows it). If the LLM server shares the GPU, it may have taken all the memory; Ollama frees it after a few minutes idle, vLLM never does.
 
@@ -26,7 +26,7 @@
 
 **Everything is one segment with no timestamps.** Vosk without word timings; the package sets `SetWords(True)`. If you are using your own Vosk code, add it.
 
-**Drug names consistently wrong.** Bigger model. Then a better microphone. Then `initial_prompt` with your vocabulary (Lesson 9).
+**Drug names consistently wrong.** Bigger model. Then a better microphone. Then `initial_prompt` with your vocabulary (Lessons 9 and 10).
 
 **Slow on CPU.** Expected. `base.en`, or buy a GPU, or accept it and transcribe while you see the next patient.
 
@@ -40,6 +40,10 @@
 
 **The note takes minutes.** A reasoning model thinking: `SCRIBE_LLM_THINKING` should be `off`. Or CPU inference with a big model: try `qwen3:4b`. Or the server is loading the model into memory on first request, which is normal once.
 
+**A red warning says the note was cut off.** The model hit `SCRIBE_LLM_MAX_TOKENS` before it finished. Raise it and draft again.
+
+**A red warning says the server read only part of the transcript, or the note ignores the start of the visit.** The model server's context window is smaller than the visit. On Ollama, restart it with `OLLAMA_CONTEXT_LENGTH=16384` (or more) and draft again. Lesson 4 explains.
+
 **`<think>` text in the note.** The package strips it; if you see it, you are running an old copy or your own client. The regex is in `notes.py`.
 
 **Empty note or `400 Bad Request`.** The server rejected the request. Run with `SCRIBE_LLM_THINKING=on` to drop the extra fields; if that fixes it, the server does not accept unknown parameters and the automatic retry should have caught it, so please open an issue with the server name and version.
@@ -49,6 +53,10 @@
 **Record button does nothing.** The browser refused microphone access. It only grants it on `localhost`/`127.0.0.1` or HTTPS. Check the address bar, then the padlock or site settings for a blocked microphone permission.
 
 **Upload works, Record produces a session with 0 seconds.** The browser recorded a format the decoder could not read. Rare. Check the server terminal for the error; `ffmpeg -i` on a saved blob tells you what it is.
+
+**`This scribe only answers on its own address`.** You opened the page under a name the scribe does not know, such as the machine's hostname. Use `http://127.0.0.1:8765`. Off localhost, see `SCRIBE_ALLOWED_HOSTS` and Lesson 7.
+
+**`is signed and can no longer be changed`.** Intended. A signed note is locked. If it is wrong, the correction belongs in your record system as an addendum, not in a silently altered note.
 
 **Another computer cannot open the page.** Correct. `SCRIBE_HOST` is `127.0.0.1` on purpose; Lesson 7.
 

@@ -85,6 +85,8 @@ def cmd_note(args, s: Settings) -> int:
     d = LLMClient(s.llm).draft(text, template=args.template, extra_instructions=args.instructions or "")
     print(d.text)
     print(f"\n[{d.model}: {d.completion_tokens} tokens in {d.elapsed_seconds}s]", file=sys.stderr)
+    for w in d.warnings:
+        print(f"WARNING: {w}", file=sys.stderr)
     return 0
 
 
@@ -95,6 +97,8 @@ def cmd_run(args, s: Settings) -> int:
     sid = p.run(Path(args.audio), template=args.template, label=args.label or "", extra_instructions=args.instructions or "")
     print(f"session {sid}")
     print(p.store.note(sid))
+    for w in p.store.meta(sid).warnings:
+        print(f"WARNING: {w}", file=sys.stderr)
     return 0
 
 
@@ -134,6 +138,8 @@ def cmd_serve(args, s: Settings) -> int:
     from .server import create_app
 
     print(f"Review app on http://{s.host}:{s.port}  (Ctrl-C to stop)")
+    if s.host not in ("127.0.0.1", "localhost", "::1"):
+        print(f"WARNING: listening on {s.host}, not just this machine. Read Lesson 7 first.", file=sys.stderr)
     uvicorn.run(create_app(s), host=s.host, port=s.port, log_level="warning")
     return 0
 

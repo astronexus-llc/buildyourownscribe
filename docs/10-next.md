@@ -43,7 +43,7 @@ A working scribe needs about an hour a month:
 - Update the scribe and its dependencies; run `pytest`.
 - Update the operating system and the GPU driver.
 - Pull the latest model if you want it; re-run the test set afterwards.
-- Check that `scribe purge` has been running (`cat scribe_data/purge.log`).
+- Check that old drafts are being purged (`grep purged scribe_data/audit.log`).
 - Restore one note from backup to prove the backup works.
 
 When something breaks, the [troubleshooting reference](reference/troubleshooting.md) covers the usual suspects, and `scribe doctor` is always the first command.

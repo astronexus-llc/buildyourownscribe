@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib import resources
 from pathlib import Path
 
@@ -61,6 +61,27 @@ class Draft:
     elapsed_seconds: float
     prompt_tokens: int = 0
     completion_tokens: int = 0
+    warnings: list[str] = field(default_factory=list)
+
+
+# English prose runs about four characters per token. If the server reports a
+# prompt far smaller than that, it did not read all of what we sent.
+_CHARS_PER_TOKEN_ALARM = 6
+
+
+def check_draft(messages: list[dict], usage: dict, finish_reason: str) -> list[str]:
+    """Things the reviewer must know that the note itself will not tell them."""
+    warnings = []
+    if finish_reason == "length":
+        warnings.append("The note was cut off at the output limit and is incomplete. "
+                        "Raise SCRIBE_LLM_MAX_TOKENS and draft again.")
+    sent_chars = sum(len(m["content"]) for m in messages)
+    prompt_tokens = usage.get("prompt_tokens", 0)
+    if prompt_tokens and sent_chars / prompt_tokens > _CHARS_PER_TOKEN_ALARM:
+        warnings.append("The model server read only part of the transcript (its context window is too small), "
+                        "so part of the visit is missing from this note. Raise the server's context length "
+                        "and draft again.")
+    return warnings
 
 
 class LLMClient:
@@ -97,7 +118,8 @@ class LLMClient:
         except Exception as e:  # noqa: BLE001
             return False, f"{self.cfg.base_url}: {e}"
 
-    def chat(self, messages: list[dict]) -> tuple[str, dict]:
+    def chat(self, messages: list[dict]) -> tuple[str, dict, str]:
+        """Returns (text, usage, finish_reason)."""
         body = {"model": self.resolve_model(), "messages": messages,
                 "temperature": self.cfg.temperature, "max_tokens": self.cfg.max_tokens, "stream": False}
         extras = {}
@@ -112,14 +134,16 @@ class LLMClient:
             r = self.http.post(url, json=body, headers=self.headers)
         r.raise_for_status()
         data = r.json()
-        content = data["choices"][0]["message"]["content"] or ""
-        return _THINK_RE.sub("", content).strip(), data.get("usage", {}) or {}
+        choice = data["choices"][0]
+        content = choice["message"]["content"] or ""
+        return _THINK_RE.sub("", content).strip(), data.get("usage", {}) or {}, choice.get("finish_reason") or ""
 
     def draft(self, transcript: Transcript | str, template: str = "soap", extra_instructions: str = "",
               template_dir_override: Path | None = None) -> Draft:
         lines = transcript.as_lines() if isinstance(transcript, Transcript) else transcript
         messages = build_messages(load_template(template, template_dir_override), lines, extra_instructions)
         t = time.time()
-        text, usage = self.chat(messages)
+        text, usage, finish_reason = self.chat(messages)
         return Draft(text=text, template=template, model=self.resolve_model(), elapsed_seconds=round(time.time() - t, 2),
-                     prompt_tokens=usage.get("prompt_tokens", 0), completion_tokens=usage.get("completion_tokens", 0))
+                     prompt_tokens=usage.get("prompt_tokens", 0), completion_tokens=usage.get("completion_tokens", 0),
+                     warnings=check_draft(messages, usage, finish_reason))

@@ -18,7 +18,8 @@ SYSTEM = """You are a medical scribe drafting a note for a licensed clinician to
 Write a SOAP note from the transcript below.
 Rules: use only information in the transcript. Never add vitals, exam findings, labs, medications or
 doses that were not said. If a section has nothing, write "Not discussed." Mark doubtful words [unclear].
-No preamble, no disclaimers, no patient name.
+No preamble, no disclaimers.
+Do not include the patient's name even if it was spoken; write "the patient".
 Format: ## Subjective  ## Objective  ## Assessment  ## Plan"""
 
 transcript = open(sys.argv[1]).read()
@@ -38,7 +39,10 @@ body = {
 }
 r = httpx.post(f"{BASE}/chat/completions", json=body, headers=headers, timeout=300)
 r.raise_for_status()
-text = r.json()["choices"][0]["message"]["content"]
+choice = r.json()["choices"][0]
+text = choice["message"]["content"]
+if choice.get("finish_reason") == "length":
+    print("WARNING: the note was cut off at max_tokens and is incomplete", file=sys.stderr)
 text = re.sub(r"<think>.*?</think>\s*", "", text, flags=re.S)   # belt and braces
 print(f"[{MODEL}]", file=sys.stderr)
 print(text.strip())

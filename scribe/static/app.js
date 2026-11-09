@@ -1,9 +1,19 @@
 const $ = (id) => document.getElementById(id);
 let current = null, recorder = null, chunks = [];
 
+// Anything that came from a person or a file goes through esc() before it
+// touches innerHTML. A label is typed text, not markup.
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
 async function api(path, opts = {}) {
   const r = await fetch("/api" + path, opts);
-  if (!r.ok) throw new Error(await r.text());
+  if (!r.ok) {
+    const body = await r.text();
+    let msg = body;
+    try { msg = JSON.parse(body).detail || body; } catch (e) { /* not JSON */ }
+    throw new Error(msg);
+  }
   return r.json();
 }
 
@@ -11,22 +21,22 @@ async function loadHealth() {
   try {
     const h = await api("/health");
     $("health").innerHTML =
-      `STT <b>${h.stt.backend} ${h.stt.model}</b> · LLM <b class="${h.llm.ok ? "ok" : "bad"}">${h.llm.ok ? h.llm.info : "not reachable"}</b>` +
-      ` · retention ${h.storage.retention_days}d${h.storage.delete_audio_on_sign ? " · audio deleted on sign" : ""}`;
+      `STT <b>${esc(h.stt.backend)} ${esc(h.stt.model)}</b> · LLM <b class="${h.llm.ok ? "ok" : "bad"}">${h.llm.ok ? esc(h.llm.info) : "not reachable"}</b>` +
+      ` · retention ${esc(h.storage.retention_days)}d${h.storage.delete_audio_on_sign ? " · audio deleted on sign" : ""}`;
   } catch (e) { $("health").textContent = "server error: " + e.message; }
 }
 
 async function loadTemplates() {
   const t = await api("/templates");
-  $("template").innerHTML = t.map(x => `<option ${x === "soap" ? "selected" : ""}>${x}</option>`).join("");
+  $("template").innerHTML = t.map(x => `<option ${x === "soap" ? "selected" : ""}>${esc(x)}</option>`).join("");
 }
 
 async function loadSessions() {
   const list = await api("/sessions");
   $("list").innerHTML = list.map(m =>
-    `<li data-id="${m.id}" class="${m.id === current ? "active" : ""}">
-       <div>${m.label || "(no label)"}</div>
-       <div class="s">${m.id} · ${m.status} · ${Math.round(m.audio_seconds)}s</div></li>`).join("");
+    `<li data-id="${esc(m.id)}" class="${m.id === current ? "active" : ""}">
+       <div>${esc(m.label) || "(no label)"}</div>
+       <div class="s">${esc(m.id)} · ${esc(m.status)} · ${Math.round(m.audio_seconds)}s</div></li>`).join("");
   for (const li of $("list").querySelectorAll("li")) li.onclick = () => open(li.dataset.id);
 }
 
@@ -38,6 +48,9 @@ async function open(id) {
   $("note").value = s.note || "";
   const signed = s.meta.status === "signed";
   $("note").disabled = signed;
+  const warnings = s.meta.warnings || [];
+  $("warnings").hidden = warnings.length === 0;
+  $("warnings").textContent = warnings.join("\n");
   $("draftbadge").textContent = signed ? `SIGNED ${s.meta.signed_at}` : "DRAFT · not signed";
   $("draftbadge").classList.toggle("signed", signed);
   $("transcribe").disabled = signed;
@@ -79,16 +92,20 @@ async function draft() {
 $("transcribe").onclick = transcribe;
 $("draft").onclick = draft;
 $("save").onclick = async () => {
-  await api(`/sessions/${current}/note`, { method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: $("note").value }) });
+  try {
+    await api(`/sessions/${current}/note`, { method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: $("note").value }) });
+  } catch (e) { alert(e.message); return open(current); }
   $("save").textContent = "Saved"; setTimeout(() => $("save").textContent = "Save edits", 1200);
 };
 $("copy").onclick = () => navigator.clipboard.writeText($("note").value);
 $("sign").onclick = async () => {
   if (!confirm("Sign this note? You are attesting that you reviewed and edited it. The audio will be deleted if that policy is on.")) return;
-  await api(`/sessions/${current}/note`, { method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: $("note").value }) });
-  await api(`/sessions/${current}/sign`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ signer: "" }) });
+  try {
+    await api(`/sessions/${current}/note`, { method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: $("note").value }) });
+    await api(`/sessions/${current}/sign`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ signer: "" }) });
+  } catch (e) { alert(e.message); }
   await open(current);
 };
 

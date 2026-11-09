@@ -17,10 +17,14 @@ The scribe already does several things by default. This lesson explains each, sh
 
 `SCRIBE_HOST` defaults to `127.0.0.1`. The review page cannot be reached from any other computer.
 
+It also refuses requests that reach it under any name other than `localhost` or `127.0.0.1`, and refuses changes requested by another website. That closes the route where a hostile page in your own browser talks to the scribe on your behalf. `server.py`, `local_only()`.
+
 ### 3. Deletes on schedule
 
 - Audio is removed the moment a note is signed (`SCRIBE_DELETE_AUDIO_ON_SIGN=1`).
-- Unsigned sessions older than `SCRIBE_RETENTION_DAYS` (7) are removed by `scribe purge`. Run it daily:
+- Unsigned sessions older than `SCRIBE_RETENTION_DAYS` (7) are removed every time the review app starts, and every hour while it runs. Nothing to remember.
+
+If you only ever use the command line and never start the review app, nothing runs the purge for you. Then schedule it:
 
 ```bash
 # crontab -e
@@ -40,7 +44,15 @@ Signed notes are never auto-deleted. Moving them into your record system and the
 
 If anyone ever asks "what happened to the recording of that visit", this is the answer.
 
-### 5. Prompts that refuse to invent
+### 5. Locks what is signed
+
+A signed session cannot be edited, re-drafted, re-transcribed, or signed again, from the page or from anywhere else. The check is in `storage.py`, the lowest layer, so no new feature can forget it. A session with no note cannot be signed.
+
+### 6. Tells the reviewer when the draft is incomplete
+
+A note cut off at the output limit, or drafted by a server that did not read the whole transcript, carries a red warning. See [Lesson 4](04-draft-note.md#two-failures-that-give-no-error).
+
+### 7. Prompts that refuse to invent
 
 Every built-in template forbids adding findings, requires "Not discussed." for empty sections, and asks for `[unclear]` markers. Keep those lines when you write your own.
 
@@ -83,6 +95,7 @@ The scribe's own dependencies: `uv pip install -e ".[cuda]" --upgrade` every mon
 
 So a colleague in the next room can use it too. Here is what that honestly requires, each a project of its own:
 
+0. Telling the scribe its new name with `SCRIBE_ALLOWED_HOSTS`, or it will refuse every request. That is the easy part.
 1. HTTPS with a real certificate (browsers will not give microphone access over plain HTTP to a non-localhost address).
 2. Authentication, so the audit log can say who signed.
 3. Authorisation, so one clinician cannot read another's drafts.
@@ -98,7 +111,8 @@ Before the first real patient, every line true:
 - [ ] Full-disk encryption on, screen lock under five minutes
 - [ ] `scribe doctor` shows the LLM at a localhost or private address
 - [ ] `SCRIBE_ALLOW_REMOTE_LLM` is not set anywhere (`env | grep SCRIBE`)
-- [ ] `scribe purge` in cron, and you have seen it run once
+- [ ] The model server's context window is larger than your longest visit, and you have drafted one long recording to prove it
+- [ ] You have seen the purge work: the audit log has a `purged` line, or you start the review app daily
 - [ ] You know where signed notes go after this folder, and have moved one
 - [ ] A backup exists and you have restored a note from it
 - [ ] You have a consent sentence and have said it out loud

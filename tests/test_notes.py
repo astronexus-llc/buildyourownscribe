@@ -67,3 +67,19 @@ def test_remote_llm_refused_by_default():
     with pytest.raises(RuntimeError, match="BAA"):
         LLMClient(LLMConfig(base_url="https://api.example.com/v1"))
     LLMClient(LLMConfig(base_url="https://api.example.com/v1", allow_remote=True))  # does not raise
+
+
+def test_clean_draft_has_no_warnings(transcript):
+    assert FakeLLM(prompt_tokens=400).client().draft(transcript).warnings == []
+
+
+def test_cut_off_note_is_flagged(transcript):
+    d = FakeLLM(finish_reason="length", prompt_tokens=400).client().draft(transcript)
+    assert len(d.warnings) == 1 and "cut off" in d.warnings[0]
+
+
+def test_truncated_transcript_is_flagged(transcript):
+    # The prompt is well over a thousand characters; a server that says it read
+    # 50 tokens of it dropped most of the visit.
+    d = FakeLLM(prompt_tokens=50).client().draft(transcript)
+    assert len(d.warnings) == 1 and "context window" in d.warnings[0]

@@ -15,6 +15,7 @@ encryption, which is the right layer for that.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import time
 import uuid
@@ -24,6 +25,13 @@ from pathlib import Path
 
 from .config import StorageConfig
 from .transcribe import Transcript
+
+
+_SESSION_ID = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{6}$")
+
+
+class SessionLocked(RuntimeError):
+    """Raised when something tries to change a signed session."""
 
 
 def _now() -> str:
@@ -41,6 +49,7 @@ class SessionMeta:
     llm_model: str = ""
     audio_seconds: float = 0.0
     signed_at: str = ""
+    warnings: list[str] = field(default_factory=list)   # e.g. "note was cut off"; shown to the reviewer
     events: list[dict] = field(default_factory=list)
 
 
@@ -57,8 +66,7 @@ class Store:
         line = {"t": _now(), "session": session_id, "event": event, **detail}
         with self.audit_path.open("a") as f:
             f.write(json.dumps(line) + "\n")
-        meta_path = self.sessions_dir / session_id / "meta.json"
-        if meta_path.exists():
+        if _SESSION_ID.match(session_id) and (self.sessions_dir / session_id / "meta.json").exists():
             meta = self.meta(session_id)
             meta.events.append(line)
             self._write_meta(meta)
@@ -72,14 +80,29 @@ class Store:
         self.audit(sid, "created", label=label)
         return meta
 
-    def path(self, sid: str, name: str) -> Path:
-        p = self.sessions_dir / sid / name
-        if not p.parent.is_dir():
+    def dir(self, sid: str) -> Path:
+        """The session's folder. The id must look like one we made: this is the
+        only thing standing between a request for ``..`` and the data folder."""
+        if not _SESSION_ID.match(sid or ""):
             raise KeyError(f"No session {sid}")
-        return p
+        d = self.sessions_dir / sid
+        if not d.is_dir():
+            raise KeyError(f"No session {sid}")
+        return d
+
+    def path(self, sid: str, name: str) -> Path:
+        return self.dir(sid) / name
 
     def meta(self, sid: str) -> SessionMeta:
-        return SessionMeta(**json.loads(self.path(sid, "meta.json").read_text()))
+        known = SessionMeta.__dataclass_fields__
+        raw = json.loads(self.path(sid, "meta.json").read_text())
+        return SessionMeta(**{k: v for k, v in raw.items() if k in known})
+
+    def require_unsigned(self, sid: str) -> SessionMeta:
+        meta = self.meta(sid)
+        if meta.status == "signed":
+            raise SessionLocked(f"Session {sid} is signed and can no longer be changed")
+        return meta
 
     def _write_meta(self, meta: SessionMeta) -> None:
         (self.sessions_dir / meta.id / "meta.json").write_text(json.dumps(asdict(meta), indent=2))
@@ -100,6 +123,7 @@ class Store:
 
     # ---- artifacts -------------------------------------------------------
     def save_transcript(self, sid: str, t: Transcript) -> None:
+        self.require_unsigned(sid)
         t.save(self.path(sid, "transcript.json"))
         self.update(sid, status="transcribed", stt_engine=f"{t.engine} {t.model}", audio_seconds=t.audio_seconds)
         self.audit(sid, "transcribed", engine=t.engine, model=t.model, seconds=t.elapsed_seconds)
@@ -108,19 +132,24 @@ class Store:
         p = self.path(sid, "transcript.json")
         return Transcript.load(p) if p.exists() else None
 
-    def save_note(self, sid: str, text: str, template: str = "", model: str = "", edited: bool = False) -> None:
+    def save_note(self, sid: str, text: str, template: str = "", model: str = "", edited: bool = False,
+                  warnings: list[str] | None = None) -> None:
+        self.require_unsigned(sid)
         self.path(sid, "note.md").write_text(text)
         if edited:
             self.audit(sid, "edited", chars=len(text))
         else:
-            self.update(sid, status="drafted", template=template, llm_model=model)
-            self.audit(sid, "drafted", template=template, model=model)
+            self.update(sid, status="drafted", template=template, llm_model=model, warnings=list(warnings or []))
+            self.audit(sid, "drafted", template=template, model=model, warnings=list(warnings or []))
 
     def note(self, sid: str) -> str | None:
         p = self.path(sid, "note.md")
         return p.read_text() if p.exists() else None
 
     def sign(self, sid: str, signer: str = "") -> SessionMeta:
+        self.require_unsigned(sid)
+        if not (self.note(sid) or "").strip():
+            raise RuntimeError("There is no note to sign yet")
         meta = self.update(sid, status="signed", signed_at=_now())
         self.audit(sid, "signed", signer=signer)
         if self.cfg.delete_audio_on_sign:
@@ -128,12 +157,12 @@ class Store:
         return meta
 
     def delete_audio(self, sid: str) -> None:
-        for p in (self.sessions_dir / sid).glob("audio.*"):
+        for p in self.dir(sid).glob("audio.*"):
             p.unlink()
             self.audit(sid, "audio_deleted", file=p.name)
 
     def delete_session(self, sid: str) -> None:
-        shutil.rmtree(self.sessions_dir / sid)
+        shutil.rmtree(self.dir(sid))
         self.audit(sid, "purged")
 
     # ---- retention -------------------------------------------------------

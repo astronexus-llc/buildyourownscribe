@@ -22,7 +22,7 @@ Everything is an environment variable prefixed `SCRIBE_`, read once at start by 
 | `SCRIBE_LLM_MODEL` | empty | Empty uses the first model the server lists |
 | `SCRIBE_LLM_API_KEY` | `not-needed` | Local servers ignore it |
 | `SCRIBE_LLM_TEMPERATURE` | `0.2` | Keep low |
-| `SCRIBE_LLM_MAX_TOKENS` | `2048` | Enough for any note |
+| `SCRIBE_LLM_MAX_TOKENS` | `2048` | Enough for most notes. A note that hits the cap is flagged as cut off |
 | `SCRIBE_LLM_TIMEOUT` | `300` | Seconds. CPU inference can be slow |
 | `SCRIBE_LLM_THINKING` | `off` | `on` lets reasoning models think; slower, rarely better for this task |
 | `SCRIBE_ALLOW_REMOTE_LLM` | unset | Set to `1` to permit a non-private address. Read Lesson 7 first |
@@ -32,7 +32,7 @@ Everything is an environment variable prefixed `SCRIBE_`, read once at start by 
 | Variable | Default | Notes |
 |---|---|---|
 | `SCRIBE_DATA_DIR` | `scribe_data` | Relative to the working directory |
-| `SCRIBE_RETENTION_DAYS` | `7` | `scribe purge` removes unsigned sessions older than this |
+| `SCRIBE_RETENTION_DAYS` | `7` | Unsigned sessions older than this are removed when the review app starts, hourly while it runs, and by `scribe purge` |
 | `SCRIBE_DELETE_AUDIO_ON_SIGN` | `1` | Set `0` to keep audio after signing |
 
 ## Audio and server
@@ -42,6 +42,7 @@ Everything is an environment variable prefixed `SCRIBE_`, read once at start by 
 | `SCRIBE_MIC` | system default | Device index or name from `scribe mics` |
 | `SCRIBE_HOST` | `127.0.0.1` | Do not change without reading Lesson 7 |
 | `SCRIBE_PORT` | `8765` | |
+| `SCRIBE_ALLOWED_HOSTS` | empty | Extra names the review app answers to, comma separated. It always answers to `localhost`, `127.0.0.1` and `SCRIBE_HOST`. Only needed off localhost; Lesson 7 |
 
 ## Example profile
 

@@ -15,7 +15,7 @@ This course builds each part in turn. By lesson 6 you have a working scribe with
 
 - **Who it is for**
 
-    Clinicians, clinic staff, and students who can open a terminal and copy a command. No programming background required. If you have one, you will read the code faster; it is about 700 lines in total.
+    Clinicians, clinic staff, and students who can open a terminal and copy a command. No programming background required. If you have one, you will read the code faster; it is about 1,200 lines of Python in total.
 
 - **What you need**
 

@@ -21,8 +21,9 @@ def transcript() -> Transcript:
 class FakeLLM:
     """Records requests and plays an OpenAI-shaped reply."""
 
-    def __init__(self, reply="## Subjective\nCough.\n", reject_extras=False):
+    def __init__(self, reply="## Subjective\nCough.\n", reject_extras=False, finish_reason="stop", prompt_tokens=50):
         self.reply, self.reject_extras, self.requests = reply, reject_extras, []
+        self.finish_reason, self.prompt_tokens = finish_reason, prompt_tokens
 
     def handler(self, request: httpx.Request) -> httpx.Response:
         if request.url.path.endswith("/models"):
@@ -31,8 +32,9 @@ class FakeLLM:
         self.requests.append(body)
         if self.reject_extras and "chat_template_kwargs" in body:
             return httpx.Response(400, json={"error": "unknown field"})
-        return httpx.Response(200, json={"choices": [{"message": {"role": "assistant", "content": self.reply}}],
-                                         "usage": {"prompt_tokens": 50, "completion_tokens": 10}})
+        return httpx.Response(200, json={
+            "choices": [{"message": {"role": "assistant", "content": self.reply}, "finish_reason": self.finish_reason}],
+            "usage": {"prompt_tokens": self.prompt_tokens, "completion_tokens": 10}})
 
     def client(self, **cfg) -> LLMClient:
         http = httpx.Client(transport=httpx.MockTransport(self.handler))

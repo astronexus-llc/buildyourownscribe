@@ -26,7 +26,7 @@
 
 **Reasoning / thinking model.** A model trained to write out a hidden chain of thought before answering. Good for puzzles, slow and unnecessary for drafting from a transcript.
 
-**Retention.** How long each kind of data is kept before deletion. Decided before the first visit, enforced by `scribe purge`.
+**Retention.** How long each kind of data is kept before deletion. Decided before the first visit, enforced by the review app each time it starts and hourly while it runs, or by `scribe purge` on a schedule.
 
 **Segment.** One chunk of a transcript with a start time, end time and text.
 

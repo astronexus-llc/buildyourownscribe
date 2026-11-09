@@ -4,6 +4,9 @@
 
 model defaults to small.en. Try base.en if slow, medium.en for better medical vocabulary.
 """
+import ctypes
+import glob
+import site
 import sys
 import time
 
@@ -11,6 +14,16 @@ from faster_whisper import WhisperModel
 
 audio = sys.argv[1]
 model_name = sys.argv[2] if len(sys.argv) > 2 else "small.en"
+
+# NVIDIA only: `pip install ".[cuda]"` puts the CUDA math libraries inside site-packages,
+# where the system does not look for them. Load them by hand first. Does nothing elsewhere.
+for folder in site.getsitepackages():
+    for name in ("cublas/lib/libcublasLt.so.*", "cublas/lib/libcublas.so.*", "cudnn/lib/libcudnn.so.*"):
+        for lib in sorted(glob.glob(f"{folder}/nvidia/{name}")):
+            try:
+                ctypes.CDLL(lib, mode=ctypes.RTLD_GLOBAL)
+            except OSError:
+                pass
 
 # Use the GPU if there is one, otherwise CPU with 8-bit weights (slower, same words).
 try:

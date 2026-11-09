@@ -2,7 +2,7 @@
 
     python steps/04_pipeline.py samples/visit-01.wav [template]
 
-This is what `scribe run` does. Read scribe/pipeline.py next; it is 60 lines.
+This is what `scribe run` does. Read scribe/pipeline.py next; it is about 70 lines.
 """
 import sys
 

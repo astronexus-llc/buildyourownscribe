@@ -47,3 +47,31 @@ def test_list_sessions_newest_first(store):
     store.update(b.id, created="2030-01-01T00:00:00+00:00")
     ids = [m.id for m in store.list_sessions()]
     assert set(ids) == {a.id, b.id}
+
+
+def test_signed_session_refuses_changes(store, transcript):
+    import pytest
+    from scribe.storage import SessionLocked
+
+    sid = store.new_session().id
+    store.save_transcript(sid, transcript)
+    with pytest.raises(RuntimeError, match="no note"):
+        store.sign(sid)
+    store.save_note(sid, "draft", template="soap", model="m")
+    store.sign(sid)
+    for change in (lambda: store.save_note(sid, "x", edited=True), lambda: store.save_note(sid, "x"),
+                   lambda: store.save_transcript(sid, transcript), lambda: store.sign(sid)):
+        with pytest.raises(SessionLocked):
+            change()
+    assert store.note(sid) == "draft"
+
+
+def test_ids_that_are_not_session_ids_are_rejected(store):
+    import pytest
+
+    for bad in ("..", ".", "", "../..", "a/b", "20260101-000000-zzzzzz"):
+        with pytest.raises(KeyError):
+            store.dir(bad)
+        with pytest.raises(KeyError):
+            store.delete_session(bad)
+    assert store.root.is_dir()

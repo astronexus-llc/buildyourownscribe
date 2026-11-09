@@ -39,7 +39,8 @@ scribe serve                                  # review app at http://127.0.0.1:8
 
 - Defaults to a local LLM. Refuses to send transcripts to a non-private address unless you set `SCRIBE_ALLOW_REMOTE_LLM=1`.
 - The output is a **draft** until a licensed human edits and signs it. The app says so on every screen.
-- Audio is deleted when the note is signed. Unsigned sessions are purged after 7 days (`scribe purge`).
+- Audio is deleted when the note is signed. Unsigned sessions are purged after 7 days, automatically while the review app runs or with `scribe purge`.
+- A signed note is locked on the server. The review app answers only to its own address.
 - Every event is appended to `scribe_data/audit.log`.
 - Prompts forbid inventing findings and require "Not discussed." for empty sections.
 

@@ -93,6 +93,8 @@ class Settings:
     storage: StorageConfig = field(default_factory=StorageConfig)
     audio: AudioConfig = field(default_factory=AudioConfig)
     host: str = _env("HOST", "127.0.0.1")
+    # Extra names the review app answers to, comma separated. Only needed off localhost.
+    allowed_hosts: tuple[str, ...] = tuple(h.strip() for h in _env("ALLOWED_HOSTS", "").split(",") if h.strip())
     port: int = int(_env("PORT", "8765"))
 
 
