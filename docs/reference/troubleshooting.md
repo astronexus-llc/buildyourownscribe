@@ -42,7 +42,7 @@
 
 **A red warning says the note was cut off.** The model hit `SCRIBE_LLM_MAX_TOKENS` before it finished. Raise it and draft again.
 
-**A red warning says the server read only part of the transcript, or the note ignores the start of the visit.** The model server's context window is smaller than the visit. On Ollama, restart it with `OLLAMA_CONTEXT_LENGTH=16384` (or more) and draft again. Lesson 4 explains.
+**A red warning says the server read only part of the transcript, or the note ignores the start of the visit, or the note comes back as a chatty summary instead of your template.** The model server's context window is smaller than the visit, and it dropped the start of the request. On Ollama, `ollama ps` shows the window under CONTEXT. Raise it with `OLLAMA_CONTEXT_LENGTH=16384` (or more), restart Ollama, and draft again. Lesson 4 shows where to set it.
 
 **`<think>` text in the note.** The package strips it; if you see it, you are running an old copy or your own client. The regex is in `notes.py`.
 

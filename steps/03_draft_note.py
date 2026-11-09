@@ -35,7 +35,7 @@ body = {
     "temperature": 0.2,                 # low: we want faithful, not creative
     "max_tokens": 2048,
     "chat_template_kwargs": {"enable_thinking": False},   # reasoning models: skip the thinking monologue
-    "think": False,                                         # same switch, Ollama's spelling
+    "reasoning_effort": "none",                             # same switch, as Ollama reads it
 }
 r = httpx.post(f"{BASE}/chat/completions", json=body, headers=headers, timeout=300)
 r.raise_for_status()

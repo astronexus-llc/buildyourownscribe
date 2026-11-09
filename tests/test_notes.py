@@ -39,13 +39,30 @@ def test_retries_without_extras_on_400(transcript):
     fake = FakeLLM(reject_extras=True)
     d = fake.client().draft(transcript)
     assert d.text.startswith("## Subjective")
-    assert len(fake.requests) == 2 and "chat_template_kwargs" not in fake.requests[1]
+    assert len(fake.requests) == 3
+    assert not {"chat_template_kwargs", "think", "reasoning_effort"} & set(fake.requests[-1])
+
+
+def test_thinking_off_sends_every_known_switch(transcript):
+    fake = FakeLLM()
+    fake.client().draft(transcript)
+    sent = fake.requests[0]
+    assert sent["reasoning_effort"] == "none"            # Ollama's OpenAI endpoint
+    assert sent["chat_template_kwargs"] == {"enable_thinking": False}   # vLLM, llama.cpp
+    assert len(fake.requests) == 1
+
+
+def test_server_that_rejects_only_reasoning_effort_keeps_the_other_switch(transcript):
+    fake = FakeLLM(reject_extras="reasoning_effort")
+    fake.client().draft(transcript)
+    assert len(fake.requests) == 2
+    assert "reasoning_effort" not in fake.requests[1] and "chat_template_kwargs" in fake.requests[1]
 
 
 def test_thinking_on_sends_no_extras(transcript):
     fake = FakeLLM()
     fake.client(thinking="on").draft(transcript)
-    assert "chat_template_kwargs" not in fake.requests[0]
+    assert "chat_template_kwargs" not in fake.requests[0] and "reasoning_effort" not in fake.requests[0]
 
 
 def test_explicit_model_is_used(transcript):

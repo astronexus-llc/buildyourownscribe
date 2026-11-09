@@ -118,20 +118,31 @@ class LLMClient:
         except Exception as e:  # noqa: BLE001
             return False, f"{self.cfg.base_url}: {e}"
 
+    def _thinking_off_ladder(self) -> list[dict]:
+        """Extra request fields to try, most complete first, ending with none.
+
+        Reasoning models (Qwen3 etc.) think before answering by default. That burns time
+        and reply tokens and adds nothing to a scribe draft. There is no single switch:
+        vLLM and llama.cpp read `chat_template_kwargs`, Ollama's OpenAI endpoint reads only
+        `reasoning_effort` (it ignores `think` there; tested on Ollama 0.40 with qwen3:8b), and
+        Ollama's native API reads `think`. A server that rejects a field it does not know
+        gets the next, shorter set.
+        """
+        if self.cfg.thinking != "off":
+            return [{}]
+        template = {"chat_template_kwargs": {"enable_thinking": False}, "think": False}
+        return [{**template, "reasoning_effort": "none"}, template, {}]
+
     def chat(self, messages: list[dict]) -> tuple[str, dict, str]:
         """Returns (text, usage, finish_reason)."""
         body = {"model": self.resolve_model(), "messages": messages,
                 "temperature": self.cfg.temperature, "max_tokens": self.cfg.max_tokens, "stream": False}
-        extras = {}
-        if self.cfg.thinking == "off":
-            # Reasoning models (Qwen3 etc.) think out loud by default; that burns minutes
-            # and adds nothing to a scribe draft. vLLM/llama.cpp read chat_template_kwargs;
-            # Ollama reads "think". Servers that reject unknown fields get a plain retry.
-            extras = {"chat_template_kwargs": {"enable_thinking": False}, "think": False}
         url = f"{self.cfg.base_url}/chat/completions"
-        r = self.http.post(url, json={**body, **extras}, headers=self.headers)
-        if r.status_code == 400 and extras:
-            r = self.http.post(url, json=body, headers=self.headers)
+        r = None
+        for extras in self._thinking_off_ladder():
+            r = self.http.post(url, json={**body, **extras}, headers=self.headers)
+            if r.status_code not in (400, 422) or not extras:
+                break
         r.raise_for_status()
         data = r.json()
         choice = data["choices"][0]

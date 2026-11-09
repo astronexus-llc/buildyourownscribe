@@ -3,9 +3,12 @@
 Two models, two decisions. Both are "the biggest that fits comfortably".
 
 !!! info "What this course was actually tested on"
-    One machine: an RTX 5090, Whisper `small.en` through faster-whisper, and a 35B Qwen model (`Qwen3.6-35B-A3B`, 4-bit) served by vLLM. Every transcript and note quoted in the lessons came from that setup. The Vosk comparison in Lesson 3 was run on the same machine.
+    One machine with an RTX 5090. Whisper `small.en` through faster-whisper for speech. Two language model setups:
 
-    The Ollama commands and model names are the route we recommend for most readers, but they were not run for this course. Neither were the smaller language models. The speed and memory figures in the tables below are rough guides from published numbers, not our measurements. If something on the Ollama route does not match what you see, please open an issue.
+    - A 35B Qwen model (`Qwen3.6-35B-A3B`, 4-bit) served by vLLM. Every transcript and note quoted in the lessons came from this one. The Vosk comparison in Lesson 3 was run on the same machine.
+    - The route we recommend for most readers: Ollama 0.40 with `qwen3:8b`, at its defaults. The lesson scripts, `scribe doctor`, `scribe run` and both draft warnings were run against it. The first note took 45 seconds while the model loaded. After that the sample visit took under 2 seconds and about 290 tokens. The model used 10 GB of graphics memory at Ollama's default window for that card.
+
+    The other language models in the table below were not run. Their memory and quality notes, and the Whisper speed figures, are rough guides from published numbers, not our measurements. Nothing was run on a CPU-only or Mac setup.
 
 ## Speech to text (Whisper via faster-whisper)
 
@@ -44,7 +47,7 @@ The scribe does not care which model, only that a server speaks the OpenAI chat 
 
 Quantisation: Ollama's defaults (Q4_K_M) are fine. Below 4-bit, faithfulness degrades fast.
 
-Reasoning models (anything with "thinking" or "R1" in the name) work; set `SCRIBE_LLM_THINKING=off` (the default) or they will spend a minute deliberating about a two-minute visit.
+Reasoning models work, and that includes `qwen3`, which thinks by default. Leave `SCRIBE_LLM_THINKING=off` (the default) or the model spends more than half its reply on a monologue you never see.
 
 ### Servers
 

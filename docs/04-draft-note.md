@@ -70,19 +70,36 @@ The package keeps templates as plain Markdown in `scribe/templates/`. Open `soap
 
 **`temperature: 0.2`.** Temperature is how much randomness the model adds when picking each word. At 0.8 it is creative; at 0 it is deterministic. A scribe should be boring. 0.1 to 0.3.
 
-**Thinking off.** Newer models (Qwen3, DeepSeek-R1 and others) "think" in a hidden monologue before answering. That doubles or triples the time for no gain on a scribe task; the transcript is right there. The two extra fields in the request body turn it off for vLLM, llama.cpp (`chat_template_kwargs`) and Ollama (`think`). The package also strips any `<think>` block that leaks through, and retries without the extra fields if a server rejects them.
+**Thinking off.** Newer models (Qwen3, DeepSeek-R1 and others) "think" in a hidden monologue before answering. On our test machine that more than doubled the reply for `qwen3:8b` on the sample visit, from about 290 tokens to about 700, for no gain on a scribe task; the transcript is right there. Worse, the monologue counts against `max_tokens`, so a long think can leave no room for the note. There is no single off switch. vLLM and llama.cpp read `chat_template_kwargs`. Ollama ignores that field on this endpoint and reads `reasoning_effort` instead, so the script sends both. The package sends both as well, strips any `<think>` block that leaks through, and retries with fewer extra fields if a server rejects them.
 
 ## Two failures that give no error
 
 **The transcript does not fit.** Every model server reads a limited number of tokens per request, called its context window. A token is about three quarters of a word. Our two and a half minute sample is about 1,250 tokens including the template, so a fifteen minute visit is roughly 6,000.
 
-Some servers refuse a request that is too long, which is the good outcome. Ollama instead drops the *beginning* of the prompt and answers anyway. You get a tidy note about the second half of the visit, and nothing tells you. Its default window depends on the version and your memory and has been as small as 4,096 tokens. Before any real visit, set it well above your longest visit and restart the server:
+Some servers refuse a request that is too long, which is the good outcome. Ollama instead drops the *beginning* of the prompt and answers anyway. We tried it: a 9,700 token visit sent to `qwen3:8b` with a 4,096 token window was read as 2,050 tokens. The allergy and the blood thinner mentioned in the first minute were gone. So was the template, which sits at the very start: the reply was a chatty summary with the patient's name in it instead of a SOAP note. Nothing in the response said so.
+
+Ollama picks its default window from your graphics memory: 4,096 tokens on smaller cards, 32,768 on our 32 GB card, more on very large ones. A fifteen minute visit does not fit in 4,096. Check what you have while a model is loaded:
+
+```bash
+ollama ps        # the CONTEXT column is the window in tokens
+```
+
+If it is too small, set it well above your longest visit. When you start Ollama by hand:
 
 ```bash
 OLLAMA_CONTEXT_LENGTH=16384 ollama serve
 ```
 
-`ollama ps` shows the context size of the loaded model, so you can confirm it took.
+On Linux the installer runs Ollama as a service, so set it there instead:
+
+```bash
+sudo systemctl edit ollama       # add the two lines below, save
+#   [Service]
+#   Environment="OLLAMA_CONTEXT_LENGTH=16384"
+sudo systemctl restart ollama
+```
+
+A bigger window costs memory. On our card `qwen3:8b` took 5.6 GB at 4,096 tokens and 10 GB at 32,768.
 
 **The note does not fit.** `max_tokens` caps the length of the reply. A model that hits the cap stops mid-sentence and the note ends halfway through the plan. The response says so, in a field most code never reads: `"finish_reason": "length"` instead of `"stop"`. The script prints a warning when it sees that.
 

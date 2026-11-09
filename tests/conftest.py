@@ -30,7 +30,9 @@ class FakeLLM:
             return httpx.Response(200, json={"data": [{"id": "fake-model"}]})
         body = json.loads(request.content)
         self.requests.append(body)
-        if self.reject_extras and "chat_template_kwargs" in body:
+        # True rejects the vLLM/llama.cpp field; a string rejects that one field by name.
+        unknown = "chat_template_kwargs" if self.reject_extras is True else self.reject_extras
+        if unknown and unknown in body:
             return httpx.Response(400, json={"error": "unknown field"})
         return httpx.Response(200, json={
             "choices": [{"message": {"role": "assistant", "content": self.reply}, "finish_reason": self.finish_reason}],
