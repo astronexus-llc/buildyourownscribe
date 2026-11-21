@@ -42,7 +42,7 @@ And honestly: because it is a satisfying thing to build.
 
 **Consent to record.** Some jurisdictions require every party to consent to a recording; others require one. Get consent from the patient every time regardless. Say it out loud, note it, and offer to turn it off. A sign in the room is not consent.
 
-**Protected health information (PHI).** The audio, the transcript, and the note are all PHI. On a single machine you control, with full-disk encryption, a screen lock, and a deletion schedule, you are in roughly the same position as a laptop with a Word document on it. The moment any of it travels to a server you do not own, you need a contract (in the US, a BAA) with whoever runs that server. This course's code refuses to do that by default.
+**Protected health information (PHI).** The audio, the transcript, and the note are all PHI. On a single machine you control, with full-disk encryption, a screen lock, and a deletion schedule, you are in roughly the same position as a laptop with a Word document on it. The moment any of it travels to a server you do not own, you need a contract (in the US, a BAA) with whoever runs that server. This course's code refuses to do that by default. [All open source, no cloud](open-source.md) shows how to check that for yourself, and [Cloud models and PHI](cloud-phi.md) covers the services that will sign such a contract.
 
 **The draft is not a note.** The model will occasionally invent a finding, miss a negative, or mishear a drug name. Lesson 8 shows you real examples from our own sample. Review is not a formality.
 
@@ -52,7 +52,7 @@ And honestly: because it is a satisfying thing to build.
 
 Do it yourself: a scribe on one machine, used by you, inside your clinic's walls, with consent and encryption.
 
-Get a professional for: anything on a network other than localhost, more than one user, storing signed notes long term, connecting to an EHR, cloud models of any kind, or any question that starts with "is it legal to".
+Get a professional for: anything on a network other than localhost, more than one user, storing signed notes long term, connecting to an EHR, cloud models of any kind (start with [Cloud models and PHI](cloud-phi.md), then ask), or any question that starts with "is it legal to".
 
 ## Hardware tiers
 

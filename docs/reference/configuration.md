@@ -14,18 +14,20 @@ Everything is an environment variable prefixed `SCRIBE_`, read once at start by 
 | `SCRIBE_STT_BEAM` | `5` | Beam size; 1 is faster and slightly worse |
 | `SCRIBE_VOSK_MODEL` | `models/vosk-model-small-en-us-0.15` | Folder of an extracted Vosk model |
 
+The scribe also sets `ORT_DISABLE_TELEMETRY=1` for you. That stops the `onnxruntime` library, which Whisper uses to skip silence, from reporting usage to Microsoft. Set it to `0` before starting if you want the library's own default back. [All open source, no cloud](../open-source.md) has the measurement.
+
 ## Language model
 
 | Variable | Default | Notes |
 |---|---|---|
 | `SCRIBE_LLM_BASE_URL` | `http://localhost:11434/v1` | Ollama. vLLM is usually `:8000/v1`, llama.cpp `:8080/v1`, LM Studio `:1234/v1` |
 | `SCRIBE_LLM_MODEL` | empty | Empty uses the first model the server lists |
-| `SCRIBE_LLM_API_KEY` | `not-needed` | Local servers ignore it |
+| `SCRIBE_LLM_API_KEY` | `not-needed` | Local servers ignore it. A cloud service needs a real one; see [Cloud models and PHI](../cloud-phi.md) |
 | `SCRIBE_LLM_TEMPERATURE` | `0.2` | Keep low |
 | `SCRIBE_LLM_MAX_TOKENS` | `2048` | Enough for most notes. A note that hits the cap is flagged as cut off |
 | `SCRIBE_LLM_TIMEOUT` | `300` | Seconds. CPU inference can be slow |
 | `SCRIBE_LLM_THINKING` | `off` | `on` lets reasoning models think; slower, rarely better for this task |
-| `SCRIBE_ALLOW_REMOTE_LLM` | unset | Set to `1` to permit a non-private address. Read Lesson 7 first |
+| `SCRIBE_ALLOW_REMOTE_LLM` | unset | Set to `1` to permit a non-private address. Read Lesson 7 and [Cloud models and PHI](../cloud-phi.md) first |
 
 ## Storage
 

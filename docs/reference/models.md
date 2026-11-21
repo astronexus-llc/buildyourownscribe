@@ -56,9 +56,11 @@ Reasoning models work, and that includes `qwen3`, which thinks by default. Leave
 | Ollama | `http://localhost:11434/v1` | Easiest. `ollama pull`, done |
 | llama.cpp `llama-server` | `http://localhost:8080/v1` | Fastest on CPU and Mac; you manage GGUF files |
 | vLLM | `http://localhost:8000/v1` | Fastest on NVIDIA for concurrent use; heavier install |
-| LM Studio | `http://localhost:1234/v1` | GUI, good for browsing models |
+| LM Studio | `http://localhost:1234/v1` | GUI, good for browsing models. Closed source, unlike the other three |
 
 All four accept the same request the scribe sends. Change the URL and nothing else.
+
+Licences differ between models. Qwen3 is Apache 2.0; Llama and Gemma carry their own terms. [All open source, no cloud](../open-source.md) has the full list. Avoid any Ollama tag ending in `cloud`: those run on Ollama's servers, not yours.
 
 ## Re-test after any change
 

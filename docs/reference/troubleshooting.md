@@ -34,7 +34,7 @@
 
 **`NOT REACHABLE` in doctor.** `curl http://localhost:11434/v1/models`. If connection refused: `ollama serve`. If it returns `{"data":[]}`: `ollama pull qwen3:8b`. If it is on another port or machine: `SCRIBE_LLM_BASE_URL`.
 
-**`LLM endpoint ... is not on this machine or a private network`.** The locality guard. Intended. Lesson 7 explains; `SCRIBE_ALLOW_REMOTE_LLM=1` overrides if you have the paperwork.
+**`LLM endpoint ... is not on this machine or a private network`.** The locality guard. Intended. Lesson 7 explains; `SCRIBE_ALLOW_REMOTE_LLM=1` overrides if you have the paperwork, which [Cloud models and PHI](../cloud-phi.md) describes.
 
 **The note starts with "Here is the SOAP note..." or ends with a disclaimer.** Weak model or a template missing the "no preamble" rule. Check the template, then try a bigger model.
 

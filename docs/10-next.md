@@ -32,7 +32,7 @@ Each of these is a reasonable next step and each is beyond this course:
 
 - **Multiple users or a shared server.** Authentication, authorisation, HTTPS, central audit.
 - **Connecting to your EHR.** FHIR, HL7, or a vendor API, plus the contract that allows it.
-- **Any cloud component.** Even "just for the drafting". BAA, data processing agreement, and a risk assessment.
+- **Any cloud component.** Even "just for the drafting". BAA, data processing agreement, and a risk assessment. [Cloud models and PHI](cloud-phi.md) tells you which vendors offer the contract, so you arrive at that conversation prepared.
 - **Long-term storage of signed notes.** Retention law, backup verification, access controls.
 - **A formal risk assessment** before use in a regulated setting, which may be required by your employer regardless of how local the system is.
 

@@ -19,7 +19,7 @@ This course builds each part in turn. By lesson 6 you have a working scribe with
 
 - **What you need**
 
-    One computer you control. An NVIDIA GPU or a recent Mac makes it fast; a plain laptop works, slower. A microphone. About 10 GB of disk for models. No internet after setup.
+    One computer you control. An NVIDIA GPU or a recent Mac makes it fast; a plain laptop works, slower. A microphone. About 10 GB of disk for models. No internet after setup, no account, no subscription.
 
 - **What you get**
 
@@ -49,5 +49,9 @@ On a desktop GPU that takes about five seconds end to end. Then `scribe serve` o
 3. **Delete on schedule.** Audio goes when the note is signed. Unsigned work is purged after seven days.
 4. **Write down what happened.** Every step appends to an audit log.
 5. **Never invent.** The prompts forbid adding findings and require "Not discussed." where the transcript is silent.
+
+## Local or cloud
+
+Everything here is open source and runs on your own machine. [All open source, no cloud](open-source.md) lists every part with its licence and shows how to prove nothing leaves. If you would rather use a hosted model, [Cloud models and PHI](cloud-phi.md) covers which services will sign a BAA and what that takes.
 
 Start with [Lesson 0](00-what-is-an-ambient-scribe.md) if you are new to this, or jump to [Lesson 1](01-setup.md) to start installing.

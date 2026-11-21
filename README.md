@@ -38,6 +38,8 @@ scribe serve                                  # review app at http://127.0.0.1:8
 ## Ground rules baked in
 
 - Defaults to a local LLM. Refuses to send transcripts to a non-private address unless you set `SCRIBE_ALLOW_REMOTE_LLM=1`.
+- All open source, and checked: transcription makes no outside connection once the model is downloaded. `docs/open-source.md` has the licences and the test.
+- A cloud model is possible under a BAA. `docs/cloud-phi.md` lists the services that offer one and what each leaves out.
 - The output is a **draft** until a licensed human edits and signs it. The app says so on every screen.
 - Audio is deleted when the note is signed. Unsigned sessions are purged after 7 days, automatically while the review app runs or with `scribe purge`.
 - A signed note is locked on the server. The review app answers only to its own address.

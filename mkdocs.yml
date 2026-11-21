@@ -56,6 +56,9 @@ nav:
   - Make it safe:
       - 7 · Harden it: 07-harden.md
       - 8 · Evaluate it: 08-evaluate.md
+  - Local or cloud:
+      - All open source, no cloud: open-source.md
+      - Cloud models and PHI: cloud-phi.md
   - Make it yours:
       - 9 · Templates for your specialty: 09-templates.md
       - 10 · Where to go next: 10-next.md

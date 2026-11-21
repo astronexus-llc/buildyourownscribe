@@ -4,7 +4,7 @@
 
 **ASR / STT.** Automatic speech recognition, speech to text. Whisper and Vosk are ASR engines.
 
-**BAA.** Business associate agreement. In the US, the contract required before a vendor may handle PHI on a covered entity's behalf. The scribe's locality guard exists because of this.
+**BAA.** Business associate agreement. In the US, the contract required before a vendor may handle PHI on a covered entity's behalf. The scribe's locality guard exists because of this. [Cloud models and PHI](../cloud-phi.md) lists who offers one.
 
 **Beam size.** How many candidate transcriptions Whisper keeps while decoding. More is more accurate and slower.
 

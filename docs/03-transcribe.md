@@ -12,7 +12,7 @@
 python steps/02_transcribe.py samples/visit-01.wav
 ```
 
-The first run downloads the model to `~/.cache/huggingface`. Then:
+The first run downloads the model to `~/.cache/huggingface`. That download is the only time this step needs the internet; [All open source, no cloud](open-source.md) shows what we measured. Then:
 
 ```
 [00:00] Good morning, Mr. Alvarez. Come on in and have a seat. How have you been since we last saw you in July?

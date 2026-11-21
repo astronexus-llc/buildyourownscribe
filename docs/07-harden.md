@@ -11,7 +11,9 @@ The scribe already does several things by default. This lesson explains each, sh
 `config.py`, `LLMConfig.check_locality()`. Before the first request, the LLM address is checked against localhost and the private ranges (10.x, 192.168.x, 172.16-31.x, `.local`, `.lan`). Anything else raises an error naming the business associate agreement you would need. The override is `SCRIBE_ALLOW_REMOTE_LLM=1`, which you set knowingly or not at all.
 
 !!! danger "Cloud models"
-    A hosted model (OpenAI, Anthropic, a cloud Ollama) can be excellent and may be entirely appropriate **with a signed BAA and your compliance officer's approval**. Without those two things, sending a transcript to one is a reportable breach in most of the world. The flag exists for people who have the paperwork.
+    A hosted model (OpenAI, Anthropic, a cloud Ollama) can be excellent and may be entirely appropriate **with a signed BAA and your compliance officer's approval**. Without those two things, sending a transcript to one is a reportable breach in most of the world. The flag exists for people who have the paperwork. [Cloud models and PHI](cloud-phi.md) lists which services offer that contract and what each leaves out.
+
+The guard reads the address, not the model. An Ollama model whose tag ends in `cloud` runs on Ollama's servers while you talk to `localhost`, and the guard cannot see that. [All open source, no cloud](open-source.md) covers it, along with how to check that nothing else calls out.
 
 ### 2. Listens only on this machine
 

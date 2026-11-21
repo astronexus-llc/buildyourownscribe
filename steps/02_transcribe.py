@@ -6,9 +6,14 @@ model defaults to small.en. Try base.en if slow, medium.en for better medical vo
 """
 import ctypes
 import glob
+import os
 import site
 import sys
 import time
+
+# The library that skips silence (onnxruntime) reports usage to Microsoft unless told
+# not to. Nothing about a visit should leave this machine, so switch that off first.
+os.environ.setdefault("ORT_DISABLE_TELEMETRY", "1")
 
 from faster_whisper import WhisperModel
 

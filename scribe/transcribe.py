@@ -13,6 +13,7 @@ from __future__ import annotations
 import ctypes
 import glob
 import json
+import os
 import site
 import sys
 import time
@@ -22,6 +23,12 @@ from pathlib import Path
 import numpy as np
 
 from .config import STTConfig
+
+# onnxruntime, which faster-whisper uses to skip silence, reports usage to Microsoft
+# on every run unless told not to (measured on onnxruntime 1.31: two connections to
+# mobile.events.data.microsoft.com). A scribe has no business calling anywhere, so
+# switch it off before the library loads. Set ORT_DISABLE_TELEMETRY=0 to undo.
+os.environ.setdefault("ORT_DISABLE_TELEMETRY", "1")
 
 
 @dataclass
@@ -103,6 +110,26 @@ def cuda_available() -> bool:
         return False
 
 
+def resolve_whisper_model(name: str) -> str:
+    """Return a folder holding the Whisper model, downloading it only if it is not cached.
+
+    Left to itself faster-whisper asks huggingface.co on every start whether the
+    model has changed, even when it is already on disk. We look on disk first and
+    go to the network only for the one-time download, so a cached scribe starts
+    with no outside connection at all.
+    """
+    if os.path.isdir(name):
+        return name
+    from faster_whisper.utils import download_model
+
+    try:
+        return download_model(name, local_files_only=True)
+    except Exception:
+        print(f"Whisper model {name!r} is not on this machine yet; downloading it once "
+              "from huggingface.co.", file=sys.stderr)
+        return download_model(name)
+
+
 # --------------------------------------------------------------------------- engines
 
 class Transcriber:
@@ -134,7 +161,8 @@ class WhisperTranscriber(Transcriber):
             compute = "float16" if device == "cuda" else "int8"
         self.device, self.compute = device, compute
         t = time.time()
-        self.model = WhisperModel(self.cfg.whisper_model, device=device, compute_type=compute)
+        self.model = WhisperModel(resolve_whisper_model(self.cfg.whisper_model), device=device,
+                                  compute_type=compute)
         self.load_seconds = time.time() - t
 
     def transcribe(self, audio: np.ndarray) -> Transcript:
