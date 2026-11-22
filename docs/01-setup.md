@@ -25,8 +25,8 @@ Install [uv](https://docs.astral.sh/uv/), a fast Python package manager. It also
 ## 2. Get the code
 
 ```bash
-git clone https://github.com/frasod/buildyourscribe
-cd buildyourscribe
+git clone https://github.com/frasod/buildyourownscribe
+cd buildyourownscribe
 uv venv
 source .venv/bin/activate
 ```
@@ -86,7 +86,7 @@ microphones     2 found
 gpu (cuda)      yes
 stt             whisper model=small.en
 llm             ok  http://localhost:11434/v1 (qwen3:8b)
-data dir        /home/you/buildyourscribe/scribe_data  retention=7d  delete_audio_on_sign=True
+data dir        /home/you/buildyourownscribe/scribe_data  retention=7d  delete_audio_on_sign=True
 ```
 
 Each line that is wrong points at the fix:

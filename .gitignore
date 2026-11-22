@@ -10,3 +10,4 @@ scribe_data/
 *.log
 .pytest_cache/
 models/
+.cache/

@@ -50,4 +50,4 @@ When something breaks, the [troubleshooting reference](reference/troubleshooting
 
 ## Contribute
 
-The course and code are MIT licensed at [github.com/frasod/buildyourscribe](https://github.com/frasod/buildyourscribe). The most useful contributions are a template for a specialty not covered, a synthetic test visit with a tricky feature, or a correction where the text is wrong. Open an issue or a pull request.
+The course and code are MIT licensed at [github.com/frasod/buildyourownscribe](https://github.com/frasod/buildyourownscribe). The most useful contributions are a template for a specialty not covered, a synthetic test visit with a tricky feature, or a correction where the text is wrong. Open an issue or a pull request.

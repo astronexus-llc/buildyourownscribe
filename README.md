@@ -8,13 +8,13 @@ An ambient scribe listens to a clinic visit and drafts the note so the clinician
 record  ->  transcribe (Whisper)  ->  draft (local LLM)  ->  review & sign  ->  store & delete on schedule
 ```
 
-**The course:** https://frasod.github.io/buildyourscribe/ (or `mkdocs serve` in this repo)
+**The course:** https://scribe.health201.com/ (or `mkdocs serve` in this repo)
 
 ## Quick start
 
 ```bash
-git clone https://github.com/frasod/buildyourscribe
-cd buildyourscribe
+git clone https://github.com/frasod/buildyourownscribe
+cd buildyourownscribe
 uv venv && source .venv/bin/activate          # or: python3 -m venv .venv
 uv pip install -e ".[cuda]"                   # drop [cuda] on a machine without an NVIDIA GPU
 

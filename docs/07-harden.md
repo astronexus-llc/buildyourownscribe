@@ -30,7 +30,7 @@ If you only ever use the command line and never start the review app, nothing ru
 
 ```bash
 # crontab -e
-0 2 * * * cd /home/you/buildyourscribe && .venv/bin/scribe purge >> scribe_data/purge.log 2>&1
+0 2 * * * cd /home/you/buildyourownscribe && .venv/bin/scribe purge >> scribe_data/purge.log 2>&1
 ```
 
 Signed notes are never auto-deleted. Moving them into your record system and then out of `scribe_data` is your workflow decision; `storage.py` has `delete_session()` for the script that does it.

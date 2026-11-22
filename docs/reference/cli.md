@@ -35,5 +35,5 @@ scribe note room2.json --template after-visit-summary > room2-avs.md
 Nightly cleanup, only needed if you never start the review app (which purges on its own):
 
 ```bash
-0 2 * * * cd /path/to/buildyourscribe && .venv/bin/scribe purge >> scribe_data/purge.log 2>&1
+0 2 * * * cd /path/to/buildyourownscribe && .venv/bin/scribe purge >> scribe_data/purge.log 2>&1
 ```

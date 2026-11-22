@@ -34,7 +34,7 @@ This course builds each part in turn. By lesson 6 you have a working scribe with
 ## The thirty-second version
 
 ```bash
-git clone https://github.com/frasod/buildyourscribe && cd buildyourscribe
+git clone https://github.com/frasod/buildyourownscribe && cd buildyourownscribe
 uv venv && source .venv/bin/activate && uv pip install -e ".[cuda]"
 ollama pull qwen3:8b                      # or any local OpenAI-compatible server
 scribe run samples/visit-01.wav           # synthetic visit -> transcript -> SOAP note

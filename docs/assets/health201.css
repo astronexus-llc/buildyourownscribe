@@ -1,0 +1,72 @@
+/* Health 201 family look: warm paper, dark ink, one teal, Libre Franklin headings
+   over a Source Serif body. Colours match health201.com. */
+
+:root {
+  --h201-paper: #FAFAF7;
+  --h201-ink: #1C2B33;
+  --h201-teal: #0F6B66;
+  --h201-muted: #5B6B72;
+  --h201-line: #D8DCD9;
+  --h201-disp: "Libre Franklin", system-ui, sans-serif;
+}
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--h201-teal);
+  --md-primary-fg-color--light: #2B8781;
+  --md-primary-fg-color--dark: #0B524E;
+  --md-accent-fg-color: #B4531F;
+  --md-default-bg-color: var(--h201-paper);
+  --md-typeset-color: var(--h201-ink);
+  --md-typeset-a-color: var(--h201-teal);
+  --md-footer-bg-color: var(--h201-ink);
+  --md-footer-bg-color--dark: #14212A;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #0B524E;
+  --md-primary-fg-color--light: #2B8781;
+  --md-primary-fg-color--dark: #083F3C;
+  --md-accent-fg-color: #E8915B;
+  --md-typeset-a-color: #6CCBC4;
+}
+
+.md-typeset { font-size: 0.85rem; line-height: 1.65; }
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-header__title,
+.md-nav__title,
+.md-nav__item--section > .md-nav__link,
+.md-typeset .admonition-title,
+.md-typeset table:not([class]) th,
+.md-footer,
+.md-tabs {
+  font-family: var(--h201-disp);
+}
+
+.md-typeset h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--md-typeset-color);
+}
+
+.md-typeset h2 { font-weight: 800; letter-spacing: -0.01em; }
+.md-typeset h3 { font-weight: 600; }
+
+.md-nav__item--section > .md-nav__link {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* The cards on the home page. */
+.md-typeset .grid.cards > ul > li {
+  border-color: var(--h201-line);
+  border-radius: 4px;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
+  border-color: rgba(255, 255, 255, 0.14);
+}

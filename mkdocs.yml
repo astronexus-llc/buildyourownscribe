@@ -1,23 +1,26 @@
 site_name: Build Your Scribe
 site_description: Build your own local-first medical ambient scribe, one lesson at a time.
-site_url: https://frasod.github.io/buildyourscribe/
-repo_url: https://github.com/frasod/buildyourscribe
-repo_name: frasod/buildyourscribe
-edit_uri: edit/main/docs/
+site_url: https://scribe.health201.com/
+# No repo_url on purpose: with it, the theme makes every reader's browser ask
+# api.github.com for star counts. The code is linked from the footer instead.
+edit_uri: https://github.com/frasod/buildyourownscribe/edit/main/docs/
+copyright: >-
+  Part of <a href="https://health201.com">Health 201</a>.
+  Code and course are MIT licensed. Not a medical device and not legal advice.
 
 theme:
   name: material
   palette:
     - scheme: default
-      primary: teal
-      accent: deep orange
+      primary: custom
+      accent: custom
       toggle: { icon: material/weather-night, name: Dark mode }
     - scheme: slate
-      primary: teal
-      accent: deep orange
+      primary: custom
+      accent: custom
       toggle: { icon: material/weather-sunny, name: Light mode }
   font:
-    text: Source Sans 3
+    text: Source Serif 4
     code: JetBrains Mono
   features:
     - navigation.sections
@@ -27,6 +30,29 @@ theme:
     - content.action.edit
     - search.suggest
     - toc.follow
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/frasod/buildyourownscribe
+      name: The code on GitHub
+    - icon: material/home-heart
+      link: https://health201.com
+      name: Health 201
+
+# The privacy plugin downloads the fonts at build time and serves them from this
+# site, so a reader's browser contacts nobody else. The hook writes the security
+# headers Cloudflare Pages sends with every page.
+plugins:
+  - search
+  - privacy
+
+hooks:
+  - hooks/csp_headers.py
+
+extra_css:
+  - https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;800&display=swap
+  - assets/health201.css
 
 markdown_extensions:
   - admonition
