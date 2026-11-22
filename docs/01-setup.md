@@ -25,7 +25,7 @@ Install [uv](https://docs.astral.sh/uv/), a fast Python package manager. It also
 ## 2. Get the code
 
 ```bash
-git clone https://github.com/frasod/buildyourownscribe
+git clone https://github.com/astronexus-llc/buildyourownscribe
 cd buildyourownscribe
 uv venv
 source .venv/bin/activate

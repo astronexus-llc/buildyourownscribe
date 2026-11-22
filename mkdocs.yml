@@ -3,7 +3,7 @@ site_description: Build your own local-first medical ambient scribe, one lesson 
 site_url: https://scribe.health201.com/
 # No repo_url on purpose: with it, the theme makes every reader's browser ask
 # api.github.com for star counts. The code is linked from the footer instead.
-edit_uri: https://github.com/frasod/buildyourownscribe/edit/main/docs/
+edit_uri: https://github.com/astronexus-llc/buildyourownscribe/edit/main/docs/
 copyright: >-
   Part of <a href="https://health201.com">Health 201</a>.
   Code and course are MIT licensed. Not a medical device and not legal advice.
@@ -34,7 +34,7 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/frasod/buildyourownscribe
+      link: https://github.com/astronexus-llc/buildyourownscribe
       name: The code on GitHub
     - icon: material/home-heart
       link: https://health201.com

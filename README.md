@@ -13,7 +13,7 @@ record  ->  transcribe (Whisper)  ->  draft (local LLM)  ->  review & sign  ->  
 ## Quick start
 
 ```bash
-git clone https://github.com/frasod/buildyourownscribe
+git clone https://github.com/astronexus-llc/buildyourownscribe
 cd buildyourownscribe
 uv venv && source .venv/bin/activate          # or: python3 -m venv .venv
 uv pip install -e ".[cuda]"                   # drop [cuda] on a machine without an NVIDIA GPU
