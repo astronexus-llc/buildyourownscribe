@@ -18,7 +18,7 @@ ok(){ python3 -c 'import json,sys;d=json.load(sys.stdin);print("success" if d.ge
 ZONE_JSON=$(cf "$API/zones?name=$ZONE_NAME")
 ZONE=$(echo "$ZONE_JSON" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["result"][0]["id"] if d.get("result") else "")')
 ACCT=$(echo "$ZONE_JSON" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["result"][0]["account"]["id"] if d.get("result") else "")')
-echo "zone: ${ZONE:+found}${ZONE:-NOT FOUND}"
+if [ -n "$ZONE" ]; then echo "zone: found"; else echo "zone: NOT FOUND"; fi
 [ -n "$ZONE" ] || exit 1
 
 echo "--- pages domain"
