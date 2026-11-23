@@ -11,3 +11,4 @@ scribe_data/
 .pytest_cache/
 models/
 .cache/
+.wrangler/
