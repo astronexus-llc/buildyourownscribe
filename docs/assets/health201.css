@@ -70,3 +70,22 @@
 [data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
   border-color: rgba(255, 255, 255, 0.14);
 }
+
+/* Fill a desktop window. The theme stops at 61rem, which leaves wide empty
+   margins on a large screen. Here the page uses 92% of the window, and the two
+   sidebars and the body type grow with it so lines stay about 100 characters. */
+@media screen and (min-width: 64em) {
+  .md-grid {
+    max-width: 92vw;
+  }
+}
+
+@media screen and (min-width: 76.25em) {
+  .md-sidebar {
+    width: max(12.1rem, 17vw);
+  }
+
+  .md-typeset {
+    font-size: max(0.85rem, 1vw);
+  }
+}
