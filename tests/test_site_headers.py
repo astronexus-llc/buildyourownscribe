@@ -34,3 +34,11 @@ def test_headers_file_allows_the_inline_scripts_and_nothing_remote(tmp_path):
     assert "font-src 'self'" in policy
     assert "googleapis" not in policy and "github" not in policy
     assert len(policy) < 2000  # Cloudflare Pages drops longer header lines
+
+
+def test_only_renamed_files_are_cached_for_a_year(tmp_path):
+    (tmp_path / "index.html").write_text("<p>hi</p>")
+    csp_headers.on_post_build({"site_dir": str(tmp_path)})
+    blocks = (tmp_path / "_headers").read_text().split("\n\n")
+    immutable = [b.splitlines()[0] for b in blocks if "immutable" in b]
+    assert immutable == ["/assets/javascripts/*", "/assets/stylesheets/*", "/assets/external/*"]

@@ -51,7 +51,16 @@ def on_post_build(config, **kwargs):
         "  Referrer-Policy: strict-origin-when-cross-origin",
         "  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()",
         "",
-        "/assets/*",
+        # Only files whose names change with their content may be cached for a
+        # year. The theme's bundles and the downloaded fonts qualify; our own
+        # stylesheet (assets/site.css) keeps its name, so it must not.
+        "/assets/javascripts/*",
+        "  Cache-Control: public, max-age=31536000, immutable",
+        "",
+        "/assets/stylesheets/*",
+        "  Cache-Control: public, max-age=31536000, immutable",
+        "",
+        "/assets/external/*",
         "  Cache-Control: public, max-age=31536000, immutable",
         "",
     ]), encoding="utf-8")
