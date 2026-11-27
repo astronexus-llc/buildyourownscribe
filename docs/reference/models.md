@@ -5,7 +5,7 @@ Two models, two decisions. Both are "the biggest that fits comfortably".
 !!! info "What this course was actually tested on"
     One machine with an RTX 5090. Whisper `small.en` through faster-whisper for speech. Two language model setups:
 
-    - A 35B Qwen model (`Qwen3.6-35B-A3B`, 4-bit) served by vLLM. Every transcript and note quoted in the lessons came from this one. The Vosk comparison in Lesson 3 was run on the same machine.
+    - A 35B Qwen model (`Qwen3.6-35B-A3B`, 4-bit) served by vLLM. Every transcript and note quoted in the lessons came from this one. The Vosk comparison in Lesson 3 was run on the same machine. On 27 November 2026 we ran the whole pipeline again with `scribe run` and the review app: the 153-second sample visit went from audio to draft note in about 5 seconds, signing deleted the audio, and the only network connection made was to the local model. Recording from a live microphone was not part of that run.
     - The route we recommend for most readers: Ollama 0.40 with `qwen3:8b`, at its defaults. The lesson scripts, `scribe doctor`, `scribe run` and both draft warnings were run against it. The first note took 45 seconds while the model loaded. After that the sample visit took under 2 seconds and about 290 tokens. The model used 10 GB of graphics memory at Ollama's default window for that card.
 
     The other language models in the table below were not run. Their memory and quality notes, and the Whisper speed figures, are rough guides from published numbers, not our measurements. Nothing was run on a CPU-only or Mac setup.
